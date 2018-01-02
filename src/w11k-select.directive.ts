@@ -23,7 +23,7 @@ export interface Scope extends ng.IScope {
   deselectFiltered: ($event: any) => void
   deselectAll: ($event: any) => void
   select: ($event: any) => void;
-  isEmpty: () => boolean;
+  isEmpty: boolean;
 
   options: {
     visible: any[]
@@ -464,10 +464,18 @@ export function w11kSelect(w11kSelectConfig, $parse, $document, w11kSelectHelper
          * ngModel
          * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+        function isEmpty() {
+          let value = controller.$viewValue;
+          return !(angular.isArray(value) && value.length > 0);
+        }
+
         function setViewValue() {
           let selectedValues = internalOptions2externalModel(internalOptions, optionsExpParsed, w11kSelectConfig);
 
           controller.$setViewValue(selectedValues);
+
+          scope.isEmpty = isEmpty();
+
           updateHeader();
         }
 
@@ -550,12 +558,7 @@ export function w11kSelect(w11kSelectConfig, $parse, $document, w11kSelectHelper
           return true;
         }
 
-        function isEmpty() {
-          let value = controller.$viewValue;
-          return !(angular.isArray(value) && value.length > 0);
-        }
-
-        scope.isEmpty = isEmpty;
+        scope.isEmpty = isEmpty();
 
         controller.$isEmpty = isEmpty;
 
